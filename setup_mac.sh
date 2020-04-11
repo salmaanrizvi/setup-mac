@@ -100,6 +100,7 @@ fi
 
 ## setup git
 echo "checking git"
+sudo xcodebuild -license
 git > /dev/null
 
 ## generate ssh key for this computer if necessary
@@ -147,7 +148,7 @@ open -Wn /Applications/iTerm.app
 echo "installing Sublime"
 install_dmg "https://download.sublimetext.com/Sublime%20Text%20Build%203211.dmg" "Sublime"
 get_repo git@github.com:salmaanrizvi/SublimeSettings.git ~/git/SublimeSettings
-ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
+sudo ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
 echo "done installing sublime. please install package control. waiting..."
 open -Wn /Applications/Sublime\ Text.app
 ln -is ~/git/SublimeSettings/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
