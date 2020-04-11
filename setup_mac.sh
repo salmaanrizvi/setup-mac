@@ -100,7 +100,6 @@ fi
 
 ## setup git
 echo "checking git"
-sudo xcodebuild -license
 git > /dev/null
 
 ## generate ssh key for this computer if necessary
