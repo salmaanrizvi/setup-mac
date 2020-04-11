@@ -175,6 +175,6 @@ which brew
 if [[ $? -ne 0 ]]; then
   echo "installing brew"
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-else
-  brew install kubectl ripgrep tig node fzf bat hub
 fi
+
+brew install kubectl ripgrep tig node fzf bat hub
