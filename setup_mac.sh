@@ -176,4 +176,4 @@ if [[ $? -ne 0 ]]; then
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
-brew install kubectl ripgrep tig node fzf bat hub
+brew install ripgrep tig node fzf bat hub kubectl helm jq kubectx terraform
