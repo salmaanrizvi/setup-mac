@@ -1,9 +1,10 @@
 # Bootstrap a new Mac with apps and tools
 
-Run `./setup_mac.sh` to bootstrap your mac with common apps and developer tools, including:
+Run `./setup_mac.sh` to bootstrap your mac with common apps and developer tools. The script is idempotent and is safe to be run multiple times.
 
+Installs:
 
-Apps:
+**Apps**
 - Docker
 - iTerm2
 - Slack
@@ -14,7 +15,7 @@ Apps:
 - 1Password
 
 
-Dev tools:
+**Dev tools:**
 - ssh keys for github
 - bash_profile
 - go
