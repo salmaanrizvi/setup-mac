@@ -17,10 +17,14 @@ function validate_input {
 ## check app takes arguments in the form of
 # $app_name, [$custom_existence_check]
 function check_app {
-  if [[ -z "$2" ]]; then
-    ls /Applications/ | grep "$1" > /dev/null
-  else # custom check provided
-    $2
+  echo "check app called with $# args: $@"
+  # custom check provided
+  if [[ "$#" -ge 2 ]]; then
+    shift
+    echo "calling $@"
+    "$@" &> /dev/null
+  else # fallback to default
+    ls /Applications/ | grep "$1" &> /dev/null
   fi
 
   if [[ $? -eq 0 ]]; then
@@ -40,7 +44,7 @@ function install_dmg {
   check_app $@
   if [[ $? -eq 0 ]]; then
     echo "$app already exists, skipping install"
-    return 0
+    return 1
   fi
 
   local tempd=$(mktemp -d)
@@ -67,7 +71,7 @@ function install_zip {
   check_app $@
   if [[ $? -eq 0 ]]; then
     echo "$app already exists, skipping install.."
-    return 0 
+    return 1
   fi
 
   local tempd=$(mktemp -d)
@@ -91,7 +95,7 @@ function install_pkg {
   check_app $@
   if [[ $? -eq 0 ]]; then
     echo "$app already exists, skipping install.."
-    return 0 
+    return 1
   fi
 
   local tempd=$(mktemp -d)
@@ -160,39 +164,43 @@ ln -is ~/git/bash_profile/.profile ~/.profile
 
 ## install iterm2
 echo "installing iTerm 2"
-install_zip https://iterm2.com/downloads/stable/iTerm2-3_3_9.zip "iTerm.app"
-get_repo git@github.com:salmaanrizvi/iTermSettings.git ~/git/iTermSettings
-echo "done installing iTerm. please import preferences in General -> Preferences -> Load Preferences. waiting..."
-open -Wn /Applications/iTerm.app
+install_zip https://iterm2.com/downloads/stable/iTerm2-3_3_9.zip "iTerm"
+if [[ $? -eq 0 ]]; then
+  get_repo git@github.com:salmaanrizvi/iTermSettings.git ~/git/iTermSettings
+  echo "done installing iTerm. please import preferences in General -> Preferences -> Load Preferences. waiting..."
+  open -Wn /Applications/iTerm.app  
+fi
 
 echo "installing Sublime"
 install_dmg "https://download.sublimetext.com/Sublime%20Text%20Build%203211.dmg" "Sublime"
-get_repo git@github.com:salmaanrizvi/SublimeSettings.git ~/git/SublimeSettings
-sudo ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
-echo "done installing sublime. please install package control. waiting..."
-open -Wn /Applications/Sublime\ Text.app
-ln -is ~/git/SublimeSettings/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+if [[ $? -eq 0 ]]; then
+  get_repo git@github.com:salmaanrizvi/SublimeSettings.git ~/git/SublimeSettings
+  sudo ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
+  echo "done installing sublime. please install package control. waiting..."
+  open -Wn /Applications/Sublime\ Text.app
+  ln -is ~/git/SublimeSettings/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+fi
 
 echo "installing Spectacle"
-install_zip https://s3.amazonaws.com/spectacle/downloads/Spectacle+1.2.zip "Spectacle.app"
+install_zip https://s3.amazonaws.com/spectacle/downloads/Spectacle+1.2.zip "Spectacle"
 
 echo "installing Alfred"
-install_dmg "https://cachefly.alfredapp.com/Alfred_4.0.9_1144.dmg" "Alfred 4.app"
+install_dmg "https://cachefly.alfredapp.com/Alfred_4.0.9_1144.dmg" "Alfred"
 
 echo "installing Firefox"
-install_dmg "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US" "Firefox.app"
+install_dmg "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US" "Firefox"
 
 echo "installing 1Password"
-install_pkg "https://app-updates.agilebits.com/download/OPM7" "1Password 7.app" 
+install_pkg "https://app-updates.agilebits.com/download/OPM7" "1Password"
 
 echo "installing Slack"
 install_dmg "https://slack.com/ssb/download-osx" "Slack"
 
 echo "installing Docker"
-install_dmg "https://download.docker.com/mac/stable/Docker.dmg" "Docker.app"
+install_dmg "https://download.docker.com/mac/stable/Docker.dmg" "Docker"
 
 echo "installing Go"
-install_pkg "https://dl.google.com/go/go1.14.2.darwin-amd64.pkg" "Go" "hash -d go; type go &>/dev/null"
+install_pkg "https://dl.google.com/go/go1.14.2.darwin-amd64.pkg" "Go" "ls /usr/local/go"
 
 which brew
 if [[ $? -ne 0 ]]; then

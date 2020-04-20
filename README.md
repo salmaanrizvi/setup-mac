@@ -16,18 +16,19 @@ Installs:
 
 
 **Dev tools:**
-- ssh keys for github
-- bash_profile
+- set up ssh keys for github
+- clone bash_profile, iterm settings, sublime settings
+  - symlinks settings files to proper locations
 - go
 - brew
-    - ripgrep
-    - tig
-    - node
-    - fzf
-    - bat
-    - hub
-    - kubectl
-    - helm
-    - jq
-    - kubectx
-    - terraform
+  - ripgrep
+  - tig
+  - node
+  - fzf
+  - bat
+  - hub
+  - kubectl
+  - helm
+  - jq
+  - kubectx
+  - terraform
