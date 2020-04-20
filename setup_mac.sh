@@ -15,7 +15,12 @@ function validate_input {
 }
 
 function check_app {
-  ls /Applications/ | grep "$1" > /dev/null
+  if [[ -z "$2" ]]; then
+    ls /Applications/ | grep "$1" > /dev/null
+  else # custom check provided
+    $2
+  fi
+
   if [[ $? -eq 0 ]]; then
     return 0
   fi
@@ -24,7 +29,7 @@ function check_app {
 }
 
 function install_dmg {
-  check_app $2
+  check_app $2 $3
   if [[ $? -eq 0 ]]; then
     echo "$2 already exists, skipping install"
     return 0
@@ -47,7 +52,7 @@ function install_dmg {
 }
 
 function install_zip {
-  check_app $2
+  check_app $2 $3
   if [[ $? -eq 0 ]]; then
     echo "$2 already exists, skipping install.."
     return 0 
@@ -67,7 +72,7 @@ function install_zip {
 }
 
 function install_pkg {
-  check_app $2
+  check_app $2 $3
   if [[ $? -eq 0 ]]; then
     echo "$2 already exists, skipping install.."
     return 0 
@@ -169,6 +174,9 @@ install_dmg "https://slack.com/ssb/download-osx" "Slack"
 
 echo "installing Docker"
 install_dmg "https://download.docker.com/mac/stable/Docker.dmg" "Docker.app"
+
+echo "installing Go"
+install_pkg "https://dl.google.com/go/go1.14.2.darwin-amd64.pkg" "Go" "hash -d go; type go &>/dev/null"
 
 which brew
 if [[ $? -ne 0 ]]; then
