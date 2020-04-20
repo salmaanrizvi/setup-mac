@@ -14,6 +14,8 @@ function validate_input {
   echo "$status"
 }
 
+## check app takes arguments in the form of
+# $app_name, [$custom_existence_check]
 function check_app {
   if [[ -z "$2" ]]; then
     ls /Applications/ | grep "$1" > /dev/null
@@ -28,15 +30,21 @@ function check_app {
   return 1
 }
 
+## install functions take arguments in the form of
+# $url, $app_name, [$existence_check_cmd]
 function install_dmg {
-  check_app $2 $3
+  url="$1"
+  app="$2"
+  shift
+
+  check_app $@
   if [[ $? -eq 0 ]]; then
-    echo "$2 already exists, skipping install"
+    echo "$app already exists, skipping install"
     return 0
   fi
 
   local tempd=$(mktemp -d)
-  curl -sL $1 > $tempd/pkg.dmg
+  curl -sL $url > $tempd/pkg.dmg
   listing=$(sudo hdiutil attach $tempd/pkg.dmg | grep Volumes)
   volume=$(echo "$listing" | cut -f 3)
 
@@ -52,14 +60,18 @@ function install_dmg {
 }
 
 function install_zip {
-  check_app $2 $3
+  url="$1"
+  app="$2"
+  shift
+
+  check_app $@
   if [[ $? -eq 0 ]]; then
-    echo "$2 already exists, skipping install.."
+    echo "$app already exists, skipping install.."
     return 0 
   fi
 
   local tempd=$(mktemp -d)
-  curl -sL $1 > $tempd/pkg.zip
+  curl -sL $url > $tempd/pkg.zip
   sudo unzip -qqa "$tempd/pkg.zip" -d "$tempd"
   app=$(find "$tempd" -name "*.app" -d 1)
 
@@ -72,14 +84,18 @@ function install_zip {
 }
 
 function install_pkg {
-  check_app $2 $3
+  url="$1"
+  app="$2"
+  shift
+
+  check_app $@
   if [[ $? -eq 0 ]]; then
-    echo "$2 already exists, skipping install.."
+    echo "$app already exists, skipping install.."
     return 0 
   fi
 
   local tempd=$(mktemp -d)
-  curl -sL $1 > $tempd/package.pkg
+  curl -sL $url > $tempd/package.pkg
   sudo installer -pkg $tempd/package.pkg -target /
   sudo rm -rf $tempd/package.pkg 
 }
