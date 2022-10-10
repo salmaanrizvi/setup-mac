@@ -164,7 +164,7 @@ ln -is ~/git/bash_profile/.profile ~/.profile
 
 ## install iterm2
 echo "installing iTerm 2"
-install_zip https://iterm2.com/downloads/stable/iTerm2-3_3_9.zip "iTerm"
+install_zip https://iterm2.com/downloads/stable/iTerm2-3_4_16.zip "iTerm"
 if [[ $? -eq 0 ]]; then
   get_repo git@github.com:salmaanrizvi/iTermSettings.git ~/git/iTermSettings
   echo "done installing iTerm. please import preferences in General -> Preferences -> Load Preferences. waiting..."
