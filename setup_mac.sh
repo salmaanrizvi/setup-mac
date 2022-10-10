@@ -159,8 +159,8 @@ echo "cloning bash_profile"
 get_repo git@github.com:salmaanrizvi/bash_profile.git ~/git/bash_profile
 
 echo "symlinking bash_profile" 
-ln -is ~/git/bash_profile/.bash_profile ~/.bash_profile
 ln -is ~/git/bash_profile/.profile ~/.profile
+ln -is ~/git/bash_profile/.bash_profile ~/.bash_profile
 
 ## install iterm2
 echo "installing iTerm 2"
@@ -210,3 +210,5 @@ if [[ $? -ne 0 ]]; then
 fi
 
 brew install ripgrep tig node fzf bat hub kubectl helm jq kubectx tfenv fd bash-completion
+
+source ~/.bash_profile
