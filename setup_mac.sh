@@ -191,7 +191,8 @@ echo "installing Firefox"
 install_dmg "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US" "Firefox"
 
 echo "installing 1Password"
-install_pkg "https://app-updates.agilebits.com/download/OPM7" "1Password"
+# install_pkg "https://app-updates.agilebits.com/download/OPM7" "1Password"
+install_zip "https://downloads.1password.com/mac/1Password.zip" "1Password 8"
 
 echo "installing Slack"
 install_dmg "https://slack.com/ssb/download-osx" "Slack"
