@@ -1,6 +1,11 @@
 # !/bin/bash
 
 set -u
+source ./check_app.sh
+source ./get_repo.sh
+source ./install_dmg.sh
+source ./install_pkg.sh
+source ./install_zip.sh
 
 function validate_input {
   local confirm 
@@ -13,106 +18,6 @@ function validate_input {
 
   echo "$status"
 }
-
-## check app takes arguments in the form of
-# $app_name, [$custom_existence_check]
-function check_app {
-  echo "check app called with $# args: $@"
-  # custom check provided
-  if [[ "$#" -ge 2 ]]; then
-    shift
-    echo "calling $@"
-    "$@" &> /dev/null
-  else # fallback to default
-    ls /Applications/ | grep "$1" &> /dev/null
-  fi
-
-  if [[ $? -eq 0 ]]; then
-    return 0
-  fi
-
-  return 1
-}
-
-## install functions take arguments in the form of
-# $url, $app_name, [$existence_check_cmd]
-function install_dmg {
-  url="$1"
-  app="$2"
-  shift
-
-  check_app $@
-  if [[ $? -eq 0 ]]; then
-    echo "$app already exists, skipping install"
-    return 1
-  fi
-
-  local tempd=$(mktemp -d)
-  curl -sL $url > $tempd/pkg.dmg
-  listing=$(sudo hdiutil attach $tempd/pkg.dmg | grep Volumes)
-  volume=$(echo "$listing" | cut -f 3)
-
-  if [ -e "$volume"/*.app ]; then
-    sudo cp -rf "$volume"/*.app /Applications
-  elif [ -e "$volume"/*.pkg ]; then
-    package=$(ls -1 "$volume" | grep .pkg | head -1)
-    sudo installer -pkg "$volume"/"$package" -target /
-  fi
-
-  sudo hdiutil detach "$(echo "$listing" | cut -f 1 -d ' ')"
-  rm -rf $tempd
-}
-
-function install_zip {
-  url="$1"
-  app="$2"
-  shift
-
-  check_app $@
-  if [[ $? -eq 0 ]]; then
-    echo "$app already exists, skipping install.."
-    return 1
-  fi
-
-  local tempd=$(mktemp -d)
-  curl -sL $url > $tempd/pkg.zip
-  sudo unzip -qqa "$tempd/pkg.zip" -d "$tempd"
-  app=$(find "$tempd" -name "*.app" -d 1)
-
-  if [ -n "$app" ]; then
-    sudo cp -rf "$app" /Applications
-    sudo rm -rf $tempd
-  else
-    echo "no .app file found in pkg at $tempd ... leaving"  
-  fi
-}
-
-function install_pkg {
-  url="$1"
-  app="$2"
-  shift
-
-  check_app $@
-  if [[ $? -eq 0 ]]; then
-    echo "$app already exists, skipping install.."
-    return 1
-  fi
-
-  local tempd=$(mktemp -d)
-  curl -sL $url > $tempd/package.pkg
-  sudo installer -pkg $tempd/package.pkg -target /
-  sudo rm -rf $tempd/package.pkg 
-}
-
-function get_repo {
-  echo "getting $1 repository.." 
-  if [[ -d "$2" ]]; then
-    echo "already have $2 repo.. pulling latest"
-    cd "$2" && git pull origin master
-  else
-    git clone $1 $2
-  fi
-} 
 
 ## validate shell is bash
 echo "checking default shell"
@@ -158,7 +63,8 @@ mkdir ~/git
 echo "cloning bash_profile"
 get_repo git@github.com:salmaanrizvi/bash_profile.git ~/git/bash_profile
 
-echo "symlinking bash_profile" 
+echo "symlinking bash_profile(s)" 
+ln -is ~/git/bash_profile/.profile ~/.doordash_profile
 ln -is ~/git/bash_profile/.profile ~/.profile
 ln -is ~/git/bash_profile/.bash_profile ~/.bash_profile
 
@@ -182,23 +88,22 @@ if [[ $? -eq 0 ]]; then
 fi
 
 echo "installing Spectacle"
-install_zip https://s3.amazonaws.com/spectacle/downloads/Spectacle+1.2.zip "Spectacle"
+install_dmg "https://github.com/rxhanson/Rectangle/releases/download/v0.59/Rectangle0.59.dmg" "Spectacle"
 
 echo "installing Alfred"
-install_dmg "https://cachefly.alfredapp.com/Alfred_4.0.9_1144.dmg" "Alfred"
+install_dmg "https://cachefly.alfredapp.com/Alfred_5.0.3_2087.dmg" "Alfred"
 
 echo "installing Firefox"
 install_dmg "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US" "Firefox"
 
 echo "installing 1Password"
-# install_pkg "https://app-updates.agilebits.com/download/OPM7" "1Password"
 install_zip "https://downloads.1password.com/mac/1Password.zip" "1Password 8"
 
 echo "installing Slack"
 install_dmg "https://slack.com/ssb/download-osx" "Slack"
 
 echo "installing Docker"
-install_dmg "https://download.docker.com/mac/stable/Docker.dmg" "Docker"
+install_dmg "https://desktop.docker.com/mac/main/arm64/Docker.dmg" "Docker"
 
 echo "installing Go"
 install_pkg "https://dl.google.com/go/go1.14.2.darwin-amd64.pkg" "Go" "ls /usr/local/go"
