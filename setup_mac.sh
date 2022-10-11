@@ -72,23 +72,29 @@ ln -is ~/git/bash_profile/.bash_profile ~/.bash_profile
 echo "installing iTerm 2"
 install_zip https://iterm2.com/downloads/stable/iTerm2-3_4_16.zip "iTerm"
 if [[ $? -eq 0 ]]; then
-  get_repo git@github.com:salmaanrizvi/iTermSettings.git ~/git/iTermSettings
-  echo "done installing iTerm. please import preferences in General -> Preferences -> Load Preferences. waiting..."
-  open -Wn /Applications/iTerm.app  
+  echo "done installing iTerm. install iterm settings?"
+  if [[ $(validate_input) == "0" ]]; then
+    get_repo git@github.com:salmaanrizvi/iTermSettings.git ~/git/iTermSettings
+    echo "please import preferences in General -> Preferences -> Load Preferences. waiting..."
+    open -Wn /Applications/iTerm.app
+  fi
 fi
 
 echo "installing Sublime"
 install_dmg "https://download.sublimetext.com/Sublime%20Text%20Build%203211.dmg" "Sublime"
 if [[ $? -eq 0 ]]; then
-  get_repo git@github.com:salmaanrizvi/SublimeSettings.git ~/git/SublimeSettings
-  sudo ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
-  echo "done installing sublime. please install package control. waiting..."
-  open -Wn /Applications/Sublime\ Text.app
-  ln -is ~/git/SublimeSettings/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+  echo "done installing sublime. install sublime settings?"
+  if [[ $(validate_input) == "0" ]]; then
+    get_repo git@github.com:salmaanrizvi/SublimeSettings.git ~/git/SublimeSettings
+    sudo ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
+    echo "please install package control. waiting..."
+    open -Wn /Applications/Sublime\ Text.app
+    ln -is ~/git/SublimeSettings/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+  fi
 fi
 
-echo "installing Spectacle"
-install_dmg "https://github.com/rxhanson/Rectangle/releases/download/v0.59/Rectangle0.59.dmg" "Spectacle"
+echo "installing Rectangle"
+install_dmg "https://github.com/rxhanson/Rectangle/releases/download/v0.59/Rectangle0.59.dmg" "Rectangle"
 
 echo "installing Alfred"
 install_dmg "https://cachefly.alfredapp.com/Alfred_5.0.3_2087.dmg" "Alfred"
