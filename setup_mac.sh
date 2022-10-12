@@ -75,7 +75,11 @@ if [[ $? -eq 0 ]]; then
   echo "done installing iTerm. install iterm settings?"
   if [[ $(validate_input) == "0" ]]; then
     get_repo git@github.com:salmaanrizvi/iTermSettings.git ~/git/iTermSettings
-    echo "please import preferences in General -> Preferences -> Load Preferences. waiting..."
+    echo "in General -> Preferences -> Load Preferences \n\tload iterm preferences plist"
+    echo "in Appearance \n\tTheme: Minimal; \n\tStatus Bar Location: bottom"
+    echo "in Profiles \n\t import appearance.json"
+    echo "in Keys \n\t import keys.itermkeymap"
+    echo "waiting until app quits..."
     open -Wn /Applications/iTerm.app
   fi
 fi
