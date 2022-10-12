@@ -90,7 +90,6 @@ if [[ $? -eq 0 ]]; then
   echo "done installing sublime. install sublime settings?"
   if [[ $(validate_input) == "0" ]]; then
     get_repo git@github.com:salmaanrizvi/SublimeSettings.git ~/git/SublimeSettings
-    sudo ln -is /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
     echo "please install package control. waiting..."
     open -Wn /Applications/Sublime\ Text.app
     ln -is ~/git/SublimeSettings/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
@@ -102,7 +101,14 @@ install_dmg "https://github.com/rxhanson/Rectangle/releases/download/v0.59/Recta
 
 echo "installing Alfred"
 install_dmg "https://cachefly.alfredapp.com/Alfred_5.0.3_2087.dmg" "Alfred"
-
+if [[ $? -eq 0 ]]; then
+  echo "done installing alfred. install alfred settings?"
+  if [[ $(validate_input) == "0" ]]; then
+    get_repo git@github.com:salmaanrizvi/alfred-settings.git ~/git/alfred-settings
+    echo "please set alfred sync preferences: Advanced -> Syncing -> Set Preferences Folder"
+    open -Wn /Applications/Alfred\ 5.app
+  fi
+fi
 echo "installing Firefox"
 install_dmg "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US" "Firefox"
 
